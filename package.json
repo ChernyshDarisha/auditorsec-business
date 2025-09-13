@@ -1,0 +1,21 @@
+{
+  "name": "auditorsec-business-materials",
+  "version": "1.0.0",
+  "description": "AuditORSEC Business & Funding Materials - Grant Applications, Investor Materials, Funding Frameworks, and Business Execution Systems",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "quantum-ai",
+    "auditorsec",
+    "business-materials",
+    "funding",
+    "grants",
+    "series-a"
+  ],
+  "author": "AuditORSEC",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {}
+}

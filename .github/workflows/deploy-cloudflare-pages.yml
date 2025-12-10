@@ -1,0 +1,43 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+
+      - name: Notify Telegram on Success
+        if: success()
+        run: |
+          curl -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "✅ Deployment to Cloudflare Pages SUCCESS\n🌍 Domain: ${{ secrets.DEPLOYMENT_DOMAIN }}\n📝 Commit: ${{ github.sha }}\n👤 Author: ${{ github.actor }}"}' \
+            https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage
+
+      - name: Notify Telegram on Failure
+        if: failure()
+        run: |
+          curl -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "❌ Deployment to Cloudflare Pages FAILED\n🌍 Domain: ${{ secrets.DEPLOYMENT_DOMAIN }}\n📝 Commit: ${{ github.sha }}\n👤 Author: ${{ github.actor }}\n⚠️ Check GitHub Actions for details"}' \
+            https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage
